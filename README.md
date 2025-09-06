@@ -1,33 +1,33 @@
 # Blog Mini Platform
 
-Một nền tảng blog mini được xây dựng với React.js và Node.js, hỗ trợ đầy đủ tính năng blog hiện đại.
+A modern blog platform built with React.js and Node.js, featuring complete blogging functionality.
 
-## ✨ Tính năng
+## ✨ Features
 
-### 🔐 Xác thực & Phân quyền
-- Đăng ký/Đăng nhập người dùng
-- Phân quyền Admin và User
+### 🔐 Authentication & Authorization
+- User registration/login
+- Admin and User roles
 - JWT Authentication
-- Profile người dùng có thể chỉnh sửa
+- Editable user profiles
 
-### 📝 Quản lý Bài viết
-- Tạo/Sửa/Xóa bài viết
+### 📝 Post Management
+- Create/Edit/Delete posts
 - Rich text editor
-- Admin có thể quản lý tất cả bài viết
-- User chỉ quản lý bài viết của mình
+- Admin can manage all posts
+- Users can only manage their own posts
 
-### 💬 Hệ thống Bình luận
-- Bình luận trên từng bài viết
-- Phản hồi bình luận (nested comments)
-- Admin có thể xóa mọi bình luận
+### 💬 Comment System
+- Comments on each post
+- Nested comment replies
+- Admin can delete any comment
 
 ### 👍 Voting System
-- Upvote/Downvote cho bài viết
-- Upvote/Downvote cho bình luận
-- Hiển thị điểm tổng hợp
-- Trạng thái vote của user
+- Upvote/Downvote for posts
+- Upvote/Downvote for comments
+- Aggregate score display
+- User vote status tracking
 
-## 🛠️ Công nghệ sử dụng
+## 🛠️ Tech Stack
 
 ### Frontend
 - **React.js 18** - UI Library
@@ -44,27 +44,27 @@ Một nền tảng blog mini được xây dựng với React.js và Node.js, h�
 - **JWT** - Authentication
 - **bcryptjs** - Password Hashing
 
-## 🚀 Cài đặt và Chạy
+## 🚀 Installation & Setup
 
-### Yêu cầu
+### Prerequisites
 - Node.js >= 16
-- MongoDB Atlas account hoặc MongoDB local
+- MongoDB Atlas account or local MongoDB
 
-### Backend
+### Backend Setup
 ```bash
 cd backend
 npm install
 npm start
 ```
 
-### Frontend
+### Frontend Setup
 ```bash
 cd blog-mini
 npm install
 npm run dev
 ```
 
-## 📁 Cấu trúc Project
+## 📁 Project Structure
 
 ```
 Blog Platform/
@@ -84,7 +84,7 @@ Blog Platform/
 └── README.md
 ```
 
-## 🔧 Cấu hình
+## 🔧 Configuration
 
 ### Environment Variables (Backend)
 ```env
@@ -101,47 +101,47 @@ VITE_API_URL=http://localhost:5000/api
 ## 📊 API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` - Đăng ký
-- `POST /api/auth/login` - Đăng nhập
-- `GET /api/auth/me` - Thông tin user
-- `PUT /api/auth/profile` - Cập nhật profile
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get user info
+- `PUT /api/auth/profile` - Update profile
 
 ### Posts
-- `GET /api/posts` - Lấy danh sách bài viết
-- `GET /api/posts/:id` - Chi tiết bài viết
-- `POST /api/posts` - Tạo bài viết
-- `PUT /api/posts/:id` - Cập nhật bài viết
-- `DELETE /api/posts/:id` - Xóa bài viết
+- `GET /api/posts` - Get all posts
+- `GET /api/posts/:id` - Get post details
+- `POST /api/posts` - Create post
+- `PUT /api/posts/:id` - Update post
+- `DELETE /api/posts/:id` - Delete post
 
 ### Comments
-- `GET /api/comments/post/:postId` - Bình luận của bài viết
-- `POST /api/comments` - Tạo bình luận
-- `PUT /api/comments/:id` - Cập nhật bình luận
-- `DELETE /api/comments/:id` - Xóa bình luận
+- `GET /api/comments/post/:postId` - Get post comments
+- `POST /api/comments` - Create comment
+- `PUT /api/comments/:id` - Update comment
+- `DELETE /api/comments/:id` - Delete comment
 
 ### Votes
-- `POST /api/votes` - Vote cho bài viết/bình luận
-- `GET /api/votes/:targetType/:targetId` - Thông tin vote
+- `POST /api/votes` - Vote on post/comment
+- `GET /api/votes/:targetType/:targetId` - Get vote info
 
-## 👨‍💻 Tác giả
+## 👨‍💻 Author
 
-**Trần Mai Tiến Đạt**
+**Tran Mai Tien Dat**
 - GitHub: [@TranMaiTienDat](https://github.com/TranMaiTienDat)
 
 ## 📄 License
 
-MIT License - xem file [LICENSE](LICENSE) để biết thêm chi tiết.
+MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Đóng góp
+## 🤝 Contributing
 
-Mọi đóng góp đều được chào đón! Hãy tạo issue hoặc pull request.
+Contributions are welcome! Please feel free to submit issues or pull requests.
 
-1. Fork project
-2. Tạo feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Tạo Pull Request
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## 📞 Liên hệ
+## 📞 Contact
 
-Nếu có câu hỏi, hãy tạo issue trong repository này.
+If you have any questions, please feel free to create an issue in this repository.

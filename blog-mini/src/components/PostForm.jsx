@@ -56,7 +56,9 @@ const PostForm = ({ post, onSuccess }) => {
     try {
       const form = new FormData()
       form.append('file', file)
-      const res = await fetch('http://localhost:3001/api/media/upload', {
+  const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/$/, '')
+  const BACKEND_ORIGIN = API_BASE.replace(/\/api$/, '')
+  const res = await fetch(`${API_BASE}/media/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token') || ''}`
@@ -65,7 +67,7 @@ const PostForm = ({ post, onSuccess }) => {
       })
       const data = await res.json()
       if (!res.ok || !data.success) throw new Error(data.message || 'Upload failed')
-  const url = data.url?.startsWith('http') ? data.url : `http://localhost:3001${data.url}`
+  const url = data.url?.startsWith('http') ? data.url : `${BACKEND_ORIGIN}${data.url}`
       // Insert markdown for image/video
       const isImage = data.mimetype?.startsWith('image/')
       const snippet = isImage ? `![](${url})` : `[Video](${url})`

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { createComment } from '../features/comments/commentsSlice'
 
@@ -40,9 +41,11 @@ const CommentForm = ({ postId }) => {
     const file = e.target.files?.[0]
     if (!file) return
     try {
-      const form = new FormData()
+  const form = new FormData()
       form.append('file', file)
-      const res = await fetch('http://localhost:3001/api/media/upload', {
+  const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001/api').replace(/\/$/, '')
+  const BACKEND_ORIGIN = API_BASE.replace(/\/api$/, '')
+  const res = await fetch(`${API_BASE}/media/upload`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token') || ''}`
@@ -51,7 +54,7 @@ const CommentForm = ({ postId }) => {
       })
       const data = await res.json()
       if (!res.ok || !data.success) throw new Error(data.message || 'Upload failed')
-  const url = data.url?.startsWith('http') ? data.url : `http://localhost:3001${data.url}`
+  const url = data.url?.startsWith('http') ? data.url : `${BACKEND_ORIGIN}${data.url}`
       const isImage = data.mimetype?.startsWith('image/')
       const snippet = isImage ? `![](${url})` : `[Video](${url})`
       setContent(prev => (prev ? prev + "\n" + snippet : snippet))
@@ -65,7 +68,7 @@ const CommentForm = ({ postId }) => {
   if (!isAuthenticated) {
     return (
       <div className="comment-form-login">
-        <p>Please <a href="/login">login</a> to leave a comment.</p>
+        <p>Please <Link to="/login">login</Link> to leave a comment.</p>
       </div>
     )
   }

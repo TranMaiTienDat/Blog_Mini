@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content="0; url=/Blog_Mini/" />
+    <script>
+      // SPA fallback: redirect to the app base preserving path
+      (function () {
+        var l = window.location;
+        var base = '/Blog_Mini/';
+        if (!l.pathname.startsWith(base)) {
+          var redirect = base + l.pathname.replace(/^\//, '') + l.search + l.hash;
+          l.replace(redirect);
+        }
+      })();
+    </script>
+  </head>
+  <body></body>
+  </html>

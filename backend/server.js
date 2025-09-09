@@ -20,8 +20,21 @@ connectDB()
 const app = express()
 
 // Middleware
+// Configure CORS for local dev and GitHub Pages (and allow override via env)
+const defaultOrigins = ['http://localhost:5173', 'https://tranmaitiendat.github.io']
+const allowedOrigins = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean)
+const origins = allowedOrigins.length ? allowedOrigins : defaultOrigins
+
 app.use(cors({
-  origin: 'http://localhost:5173', // Vite dev server URL
+  origin: function (origin, callback) {
+    // allow requests with no origin like mobile apps or curl
+    if (!origin) return callback(null, true)
+    if (origins.includes(origin)) return callback(null, true)
+    return callback(new Error('Not allowed by CORS'))
+  },
   credentials: true
 }))
 

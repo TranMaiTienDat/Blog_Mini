@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { registerUser, clearError } from '../features/auth/authSlice'
+import EmailVerification from '../components/EmailVerification'
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,10 @@ const Register = () => {
     password: '',
     confirmPassword: '',
   })
+  
+  const [showVerification, setShowVerification] = useState(false)
+  const [registeredEmail, setRegisteredEmail] = useState('')
+  const [validationError, setValidationError] = useState('')
   
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -33,13 +38,20 @@ const Register = () => {
       ...formData,
       [e.target.name]: e.target.value,
     })
+    // Xóa validation error khi user thay đổi input
+    if (validationError) {
+      setValidationError('')
+    }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     
+    // Clear previous validation errors
+    setValidationError('')
+    
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!')
+      setValidationError('Passwords do not match!')
       return
     }
     
@@ -52,11 +64,33 @@ const Register = () => {
     const monthDiff = today.getMonth() - birthDate.getMonth()
     
     if (age < 13 || (age === 13 && monthDiff < 0)) {
-      alert('You must be at least 13 years old to register!')
+      setValidationError('You must be at least 13 years old to register!')
       return
     }
     
-    dispatch(registerUser(userData))
+    try {
+      const result = await dispatch(registerUser(userData)).unwrap()
+      if (result.requiresVerification) {
+        setRegisteredEmail(formData.email)
+        setShowVerification(true)
+      }
+    } catch (error) {
+      console.error('Registration failed:', error)
+    }
+  }
+
+  const handleVerificationSuccess = () => {
+    setShowVerification(false)
+    navigate('/')
+  }
+
+  if (showVerification) {
+    return (
+      <EmailVerification 
+        email={registeredEmail} 
+        onVerificationSuccess={handleVerificationSuccess}
+      />
+    )
   }
 
   return (
@@ -164,6 +198,7 @@ const Register = () => {
             />
           </div>
           
+          {validationError && <div className="error-message">{validationError}</div>}
           {error && <div className="error-message">{error}</div>}
           
           <button type="submit" disabled={isLoading} className="btn btn-primary">

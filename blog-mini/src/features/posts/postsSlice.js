@@ -117,7 +117,11 @@ const postsSlice = createSlice({
       })
       .addCase(createPost.fulfilled, (state, action) => {
         state.isLoading = false
-        state.posts.unshift(action.payload)
+        // Normalize payload shape: API may return { data: post } or post directly
+        const created = action.payload?.data || action.payload
+        if (created) {
+          state.posts.unshift(created)
+        }
         state.error = null
       })
       .addCase(createPost.rejected, (state, action) => {
@@ -131,11 +135,15 @@ const postsSlice = createSlice({
       })
       .addCase(updatePost.fulfilled, (state, action) => {
         state.isLoading = false
-        const index = state.posts.findIndex(post => post.id === action.payload.id)
-        if (index !== -1) {
-          state.posts[index] = action.payload
+        // Normalize payload and use _id for Mongo-style documents
+        const updated = action.payload?.data || action.payload
+        if (updated) {
+          const index = state.posts.findIndex(post => post._id === updated._id)
+          if (index !== -1) {
+            state.posts[index] = updated
+          }
+          state.currentPost = updated
         }
-        state.currentPost = action.payload
         state.error = null
       })
       .addCase(updatePost.rejected, (state, action) => {
@@ -149,7 +157,8 @@ const postsSlice = createSlice({
       })
       .addCase(deletePost.fulfilled, (state, action) => {
         state.isLoading = false
-        state.posts = state.posts.filter(post => post.id !== action.payload)
+  // action.payload is the deleted id
+  state.posts = state.posts.filter(post => post._id !== action.payload)
         state.error = null
       })
       .addCase(deletePost.rejected, (state, action) => {

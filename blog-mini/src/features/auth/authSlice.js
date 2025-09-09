@@ -6,9 +6,17 @@ export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
-      return await authService.login(credentials)
+      console.log('🔵 authSlice: Calling authService.login')
+      const result = await authService.login(credentials)
+      console.log('🟢 authSlice: Login successful:', result)
+      return result
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed')
+      console.log('🔴 authSlice: Login error caught:', error)
+      console.log('🔴 authSlice: Error response:', error.response)
+      console.log('🔴 authSlice: Error message:', error.response?.data?.message)
+      const errorMessage = error.response?.data?.message || 'Login failed'
+      console.log('🔴 authSlice: Rejecting with:', errorMessage)
+      return rejectWithValue(errorMessage)
     }
   }
 )
@@ -38,6 +46,28 @@ export const updateUserProfile = createAsyncThunk(
       return await authService.updateProfile(updateData)
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Update failed')
+    }
+  }
+)
+
+export const verifyEmail = createAsyncThunk(
+  'auth/verifyEmail',
+  async ({ email, verificationCode }, { rejectWithValue }) => {
+    try {
+      return await authService.verifyEmail(email, verificationCode)
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Verification failed')
+    }
+  }
+)
+
+export const resendVerification = createAsyncThunk(
+  'auth/resendVerification',
+  async ({ email }, { rejectWithValue }) => {
+    try {
+      return await authService.resendVerification(email)
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Resend failed')
     }
   }
 )
@@ -90,8 +120,15 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false
         state.user = action.payload.user
-        state.token = action.payload.token
-        state.isAuthenticated = true
+        // Chỉ set authenticated nếu có token (đã verify email)
+        if (action.payload.token) {
+          state.token = action.payload.token
+          state.isAuthenticated = true
+        } else {
+          // Nếu chưa verify, không set authenticated
+          state.token = null
+          state.isAuthenticated = false
+        }
         state.error = null
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -117,6 +154,35 @@ const authSlice = createSlice({
         state.error = null
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload
+      })
+      // Email Verification
+      .addCase(verifyEmail.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(verifyEmail.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.user = action.payload.user
+        state.token = action.payload.token
+        state.isAuthenticated = true
+        state.error = null
+      })
+      .addCase(verifyEmail.rejected, (state, action) => {
+        state.isLoading = false
+        state.error = action.payload
+      })
+      // Resend Verification
+      .addCase(resendVerification.pending, (state) => {
+        state.isLoading = true
+        state.error = null
+      })
+      .addCase(resendVerification.fulfilled, (state) => {
+        state.isLoading = false
+        state.error = null
+      })
+      .addCase(resendVerification.rejected, (state, action) => {
         state.isLoading = false
         state.error = action.payload
       })

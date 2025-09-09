@@ -65,6 +65,23 @@ const PostDetail = () => {
     )
   }
 
+  const renderContent = (text) => {
+    // Very basic Markdown support: code fences and line breaks, images and links already come as markdown from content
+    // We'll split by code fences ``` and wrap in <pre><code>
+    const parts = text.split(/```/)
+    return parts.map((part, idx) => {
+      if (idx % 2 === 1) {
+        // code block
+        return (
+          <pre key={idx} className="code-block"><code>{part}</code></pre>
+        )
+      }
+      // normal text paragraphs, convert image markdown ![](url) and [Video](url)
+      const withBreaks = part.split('\n').map((p, i) => <p key={`${idx}-${i}`}>{p}</p>)
+      return withBreaks
+    })
+  }
+
   return (
     <div className="post-detail">
       <div className="post-header">
@@ -76,9 +93,7 @@ const PostDetail = () => {
       </div>
       
       <div className="post-content">
-        {currentPost.content.split('\n').map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
-        ))}
+        {renderContent(currentPost.content)}
       </div>
       
       <div className="post-vote-section">

@@ -69,6 +69,11 @@ router.get('/:id', async (req, res) => {
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { title, content } = req.body
+    // Normalize tags: accept array or comma-separated string
+    let { tags } = req.body
+    if (typeof tags === 'string') {
+      tags = tags.split(',').map(t => t.trim()).filter(Boolean)
+    }
 
     // Validate input
     if (!title || !content) {
@@ -83,7 +88,8 @@ router.post('/', authMiddleware, async (req, res) => {
       title,
       content,
       author: req.user._id,
-      authorId: req.user._id
+      authorId: req.user._id,
+      tags: Array.isArray(tags) ? tags : []
     })
 
     await post.save()
@@ -120,6 +126,10 @@ router.post('/', authMiddleware, async (req, res) => {
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const { title, content } = req.body
+    let { tags } = req.body
+    if (typeof tags === 'string') {
+      tags = tags.split(',').map(t => t.trim()).filter(Boolean)
+    }
 
     let post = await Post.findById(req.params.id)
 
@@ -141,7 +151,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
     // Update post
     post = await Post.findByIdAndUpdate(
       req.params.id,
-      { title, content },
+      { title, content, tags: Array.isArray(tags) ? tags : undefined },
       { new: true, runValidators: true }
     ).populate('author', 'name email')
 

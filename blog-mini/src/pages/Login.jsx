@@ -8,38 +8,47 @@ const Login = () => {
     email: '',
     password: '',
   })
-  
+  const [localError, setLocalError] = useState('')
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { isLoading, error, isAuthenticated } = useSelector((state) => state.auth)
 
+  // Clear any stale errors on mount
+  useEffect(() => {
+    dispatch(clearError())
+  }, [dispatch])
+
+  // Navigate home when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/')
     }
-    
-    return () => {
-      dispatch(clearError())
-    }
-  }, [isAuthenticated, navigate, dispatch])
+  }, [isAuthenticated, navigate])
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    if (localError) setLocalError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    dispatch(loginUser(formData))
+    setLocalError('')
+    try {
+      await dispatch(loginUser(formData)).unwrap()
+      // navigation handled by isAuthenticated effect
+    } catch (err) {
+      const msg = typeof err === 'string' ? err : err?.message || 'Sai email hoặc mật khẩu'
+      setLocalError(msg)
+    }
   }
+
+  const message = localError || error
 
   return (
     <div className="auth-container">
       <div className="auth-form">
         <h2>Login</h2>
-        
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -53,7 +62,7 @@ const Login = () => {
               placeholder="Enter your email"
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -66,14 +75,16 @@ const Login = () => {
               placeholder="Enter your password"
             />
           </div>
-          
-          {error && <div className="error-message">{error}</div>}
-          
+
+          {message && (
+            <div className="error-message">{message}</div>
+          )}
+
           <button type="submit" disabled={isLoading} className="btn btn-primary">
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>
         </form>
-        
+
         <p className="auth-link">
           Don't have an account? <Link to="/register">Register here</Link>
         </p>

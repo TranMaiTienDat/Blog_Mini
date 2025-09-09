@@ -53,6 +53,28 @@ const Comment = ({ comment }) => {
 
   const canModify = user && (user.id === comment.author._id || user.role === 'admin')
 
+  const renderContent = (text) => {
+    // Very basic markdown rendering for images and links
+    // Replace ![](url) with <img>
+    const parts = text.split(/\n+/)
+    return parts.map((line, idx) => {
+      // Image pattern
+      const imgMatch = line.match(/^!\[\]\(([^)]+)\)$/)
+      if (imgMatch) {
+        const src = imgMatch[1]
+        return <div key={idx}><img src={src} alt="" style={{ maxWidth: '100%', borderRadius: 8 }} /></div>
+      }
+      // Link pattern [Text](url)
+      const linkMatch = line.match(/^\[([^\]]*)\]\(([^)]+)\)$/)
+      if (linkMatch) {
+        const text = linkMatch[1]
+        const href = linkMatch[2]
+        return <p key={idx}><a href={href} target="_blank" rel="noreferrer">{text || href}</a></p>
+      }
+      return <p key={idx}>{line}</p>
+    })
+  }
+
   return (
     <div className="comment">
       <div className="comment-header">
@@ -91,7 +113,7 @@ const Comment = ({ comment }) => {
             </div>
           </div>
         ) : (
-          <p>{comment.content}</p>
+          <div>{renderContent(comment.content)}</div>
         )}
       </div>
       

@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+// Hard-code URL để tránh vấn đề environment variable
 const API_BASE_URL = 'http://localhost:3001/api'
 
 const api = axios.create({
@@ -27,7 +28,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status
+    const url = error.config?.url || ''
+    const isAuthEndpoint = url.includes('/auth/login') || url.includes('/auth/register') || url.includes('/auth/verify-email') || url.includes('/auth/resend-verification')
+    const hasToken = !!localStorage.getItem('token')
+
+    // Only force logout/redirect for 401s on protected endpoints when a token exists
+    if (status === 401 && hasToken && !isAuthEndpoint) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.location.href = '/login'

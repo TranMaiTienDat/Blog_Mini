@@ -1,6 +1,5 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
-const bcrypt = require('bcryptjs')
 const User = require('./models/User')
 const Post = require('./models/Post')
 const connectDB = require('./config/db')
@@ -19,26 +18,26 @@ const seedData = async () => {
     console.log('🗑️ Cleared existing data')
     
     // Create admin user
-    const hashedPassword = await bcrypt.hash('password123', 10)
     const adminUser = await User.create({
       name: 'Admin User',
+      username: 'admin',
       email: 'admin@test.com',
       dateOfBirth: new Date('1990-01-01'),
       gender: 'prefer-not-to-say',
       role: 'admin',
-      password: hashedPassword
+      password: 'password123'
     })
     
     console.log('👤 Created admin user:', adminUser.email)
     
     // Create sample user
-    const sampleUserPassword = await bcrypt.hash('user123', 10)
     const sampleUser = await User.create({
       name: 'Sample User',
+      username: 'sampleuser',
       email: 'user@test.com',
       dateOfBirth: new Date('1995-05-15'),
       gender: 'male',
-      password: sampleUserPassword
+      password: 'user123'
     })
     
     console.log('👤 Created sample user:', sampleUser.email)

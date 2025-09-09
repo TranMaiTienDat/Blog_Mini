@@ -28,10 +28,10 @@ const PostCard = ({ post }) => {
       </h3>
       
       <p className="post-excerpt">
-        {post.content.length > 150 
-          ? `${post.content.substring(0, 150)}...` 
-          : post.content
-        }
+        {(() => {
+          const content = post?.content || ''
+          return content.length > 150 ? `${content.substring(0, 150)}...` : content
+        })()}
       </p>
       
       <div className="post-meta">

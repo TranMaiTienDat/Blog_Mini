@@ -46,9 +46,14 @@ const Navbar = () => {
         </Link>
         
         <div className="nav-menu">
-          <Link to="/" className="nav-link">
-            Home
-          </Link>
+          {isAuthenticated && (
+            <Link to="/" className="nav-link">
+              Home
+            </Link>
+          )}
+          {isAuthenticated && user?.role === 'admin' && (
+            <Link to="/admin" className="nav-link">Admin</Link>
+          )}
           
           {isAuthenticated ? (
             <>

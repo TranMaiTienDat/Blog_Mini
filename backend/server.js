@@ -8,6 +8,8 @@ const authRoutes = require('./routes/auth')
 const postRoutes = require('./routes/posts')
 const commentRoutes = require('./routes/comments')
 const voteRoutes = require('./routes/votes')
+const adminRoutes = require('./routes/admin')
+const mediaRoutes = require('./routes/media')
 
 // Load environment variables
 dotenv.config()
@@ -25,12 +27,16 @@ app.use(cors({
 
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
+// Serve uploaded media files
+app.use('/uploads', express.static('uploads'))
 
 // Routes
 app.use('/api/auth', authRoutes)
 app.use('/api/posts', postRoutes)
 app.use('/api/comments', commentRoutes)
 app.use('/api/votes', voteRoutes)
+app.use('/api/admin', adminRoutes)
+app.use('/api/media', mediaRoutes)
 
 // Health check route
 app.get('/api/health', (req, res) => {

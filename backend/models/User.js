@@ -46,6 +46,22 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
+  lastLogin: {
+    type: Date,
+    default: null
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false
+  },
+  emailVerificationCode: {
+    type: String,
+    default: null
+  },
+  emailVerificationExpires: {
+    type: Date,
+    default: null
+  },
   password: {
     type: String,
     required: [true, 'Password is required'],
@@ -76,10 +92,32 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password)
 }
 
+// Method để tạo mã xác nhận email
+userSchema.methods.generateEmailVerificationCode = function() {
+  const code = Math.floor(100000 + Math.random() * 900000).toString() // 6 digit code
+  this.emailVerificationCode = code
+  this.emailVerificationExpires = new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
+  return code
+}
+
+// Method để kiểm tra mã xác nhận
+userSchema.methods.verifyEmailCode = function(code) {
+  if (!this.emailVerificationCode || !this.emailVerificationExpires) {
+    return false
+  }
+  
+  if (this.emailVerificationExpires < new Date()) {
+    return false // Mã đã hết hạn
+  }
+  
+  return this.emailVerificationCode === code
+}
+
 // Loại bỏ password khi convert to JSON
 userSchema.methods.toJSON = function() {
   const user = this.toObject()
   delete user.password
+  delete user.emailVerificationCode
   return user
 }
 

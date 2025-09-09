@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "demo1",
+    "title": "Welcome to Blog Mini",
+    "content": "This is a demo post for the static backend. Full functionality requires a real Node.js backend.",
+    "author": "Admin",
+    "authorId": "admin",
+    "upvotes": 5,
+    "downvotes": 0,
+    "tags": ["demo", "welcome"],
+    "createdAt": "2025-09-09T00:00:00.000Z"
+  },
+  {
+    "_id": "demo2", 
+    "title": "Deploy Guide",
+    "content": "To get full functionality, deploy the backend to Render or Railway (free tiers available).",
+    "author": "System",
+    "authorId": "system",
+    "upvotes": 3,
+    "downvotes": 0,
+    "tags": ["guide", "deploy"],
+    "createdAt": "2025-09-09T01:00:00.000Z"
+  }
+]

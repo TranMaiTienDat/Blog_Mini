@@ -1,9 +1,12 @@
 import axios from 'axios'
 
 // Use environment variable in production (GitHub Pages), fallback to localhost in dev
+// For demo mode, can use static JSON files hosted on GitHub Pages
 const API_BASE_URL =
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) ||
   'http://localhost:3001/api'
+
+console.log('API Base URL:', API_BASE_URL)
 
 const api = axios.create({
   baseURL: API_BASE_URL,
